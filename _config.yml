@@ -1,27 +1,5 @@
-# _config.yml
-
-title: My GitHub Page
-description: A simple site hosted on GitHub Pages
-author: Your Name
-email: your.email@example.com
-
-# Theme (GitHub Pages supports a set of pre-installed themes)
-theme: minima
-
-# URL settings
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://your-username.github.io" # replace with your GitHub Pages URL
-
-# Build settings
-markdown: kramdown
-
-# Optional: social links
-social_links:
-  github: https://github.com/your-username
-  linkedin: https://www.linkedin.com/in/your-profile
-
-# Exclude files from build
-exclude:
-  - README.md
-  - Gemfile
-  - Gemfile.lock
+title: Minimal theme
+logo: /assets/img/logo.png
+description: Minimal is a theme for GitHub Pages.
+google_analytics:
+theme: jekyll-theme-minimal
