@@ -10,6 +10,11 @@
     display: none;
 }
 
+#skill-details-card img {
+    max-width: 100%;
+    border-radius: 5px;
+}
+
 #skill-details-card p {
     margin: 0;
     font-size: 14px;
