@@ -1,121 +1,35 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Resume</title>
-    <link rel="stylesheet" href="./styles/style.css">
+    <title>Adrian Peh | Interactive Resume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .node:hover { cursor: pointer; }
+        .link { transition: stroke-opacity 0.3s; }
+        .highlight { stroke-opacity: 1 !important; stroke-width: 3px !important; }
+        .dim { opacity: 0.1; }
+    </style>
+
+<link rel="stylesheet" href="./index.css">
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "d3": "https://esm.sh/d3@^7.9.0"
+  }
+}
+</script>
+  <script type="module" crossorigin src="/assets/index-Dr72Ad6u.js"></script>
 </head>
-<body>
-    <header>
-        <h1>Adrian Peh</h1>
-        <p>+65 9011 7078 | adrianpehzl@gmail.com | <a href="https://www.linkedin.com/in/adrian-peh" target="_blank">www.linkedin.com/in/adrian-peh</a></p>
-    </header>
-    <section id="summary">
-        <h2>Summary</h2>
-        <p>Experienced in client-facing operations and automation solutions across multiple industries. Skilled in Business Process Digitalization, Optimization, and Automation, with hands-on expertise in RPA, Power Platform, and software development. Proven ability to select and lead cross-functional teams, design end-to-end solutions, and support technical execution while driving stakeholder success.</p>
-    </section>
-    <section id="skills">
-        <h2>Skills</h2>
-        <div class="content">
-            <ul>
-                <li>
-                    <button class="skill-btn" 
-                        data-details="Acted as a strategic partner to customers, analyzing business processes, and conducting UATs. Led cross-functional teams and developed RPA workflows."
-                        data-image="./images/project-management.jpg">
-                        Project Management
-                    </button>
-                </li>
-                <li>
-                    <button class="skill-btn" 
-                        data-details="Designed end-to-end solutions, managed stakeholder relationships, and conducted user training for automation tools."
-                        data-image="./images/solution-architecture.jpg">
-                        Solution Architecture
-                    </button>
-                </li>
-                <li>
-                    <button class="skill-btn" 
-                        data-details="Developed Power Platform and RPA solutions, including workflows for automation across industries."
-                        data-image="./images/ai-automation.jpg">
-                        AI Automation
-                    </button>
-                </li>
-                <li>
-                    <button class="skill-btn" 
-                        data-details="Contributed to software development projects using C++, Python, TypeScript, and JavaScript. Ensured quality through testing frameworks."
-                        data-image="./images/software-engineering.jpg">
-                        Software Engineering & Development
-                    </button>
-                </li>
-            </ul>
-        </div>
-    </section>
-
-    <!-- Add a container for the hover card -->
-    <div id="skill-details-card" class="hidden"></div>
-
-    <section id="certifications">
-        <h2>Certifications</h2>
-        <div class="content">
-            <ul>
-                <li>Understanding Cisco Network Automation Essentials (DEVNAE) - Cisco</li>
-                <li>Six Sigma Yellow Belt Certified Professional</li>
-                <li>Google Project Management Professional</li>
-                <li>Configure Atlassian Tools for Effective Service Management – Atlassian (Confluence & Jira Automation)</li>
-                <li>Registered Scrum Basics™ – Dr. Jeff Sutherland (Co-creator of Scrum)</li>
-            </ul>
-        </div>
-    </section>
-    <section id="experience">
-        <h2>Professional Experience</h2>
-        <div class="job">
-            <h3>Solutions Architect & Team Lead</h3>
-            <p>Avanade</p>
-            <p>May 2025 – Present</p>
-            <ul>
-                <li>Acted as a strategic partner to customers, from analyzing as-is business processes to conducting collaborative onsite UATs, supported by meticulous proposals, project plans, and PoCs.</li>
-                <li>Selected and led cross-functional teams of up to 8 members, ensuring optimal skill alignment for client projects.</li>
-                <li>Designed and conducted training for automation tools such as Power Automate and Copilot Studio.</li>
-                <li>Developed RPA workflows and Power Platform solutions to accelerate automation initiatives across various industries including maritime, hospitality, healthcare, and more.</li>
-            </ul>
-        </div>
-        <div class="job">
-            <h3>Technical Project Manager</h3>
-            <p>Teeny Weeny Wizard</p>
-            <p>January 2024 – May 2025</p>
-            <ul>
-                <li>Led cross-functional teams (8–10 members) to develop and deliver 2D and 3D RPG games.</li>
-                <li>Featured at Singapore Comic Con 2025.</li>
-                <li>Contributed as a developer alongside project management responsibilities, coding core features in C++/Python and ensuring quality through testing frameworks.</li>
-            </ul>
-        </div>
-        <div class="job">
-            <h3>Quality Assurance (QA) Engineer</h3>
-            <p>Sanmina</p>
-            <p>March 2019 – October 2020</p>
-            <ul>
-                <li>Automated Quality Assurance processes, improving Turnaround Time (TAT) by 50%.</li>
-                <li>Designed and implemented process improvements aligned with Lean Six Sigma framework.</li>
-                <li>Designed and managed the 360° Virtual Plant Tour project end-to-end, creating AutoCAD models and overseeing deployment.</li>
-            </ul>
-        </div>
-    </section>
-    <section id="education">
-        <h2>Education</h2>
-        <div class="school">
-            <h3>Bachelor of Technology - Computer Science</h3>
-            <p>Singapore Institute of Technology</p>
-            <p>2022 – 2026</p>
-        </div>
-        <div class="school">
-            <h3>Diploma in Electrical & Electronic Engineering (EEE), Specialization: ICT</h3>
-            <p>Singapore Polytechnic</p>
-            <p>2017 – 2020</p>
-        </div>
-    </section>
-    <footer>
-        <p>&copy; 2026 Adrian Peh</p>
-    </footer>
-    <script src="./scripts/script.js"></script>
+<body class="bg-slate-50 text-slate-900">
+    <div id="root"></div>
 </body>
 </html>
