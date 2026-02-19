@@ -54,7 +54,7 @@ const App: React.FC = () => {
               <a href="tel:+6590117078" className="flex items-center gap-2 hover:text-blue-600 transition-colors">
                 <i className="fas fa-phone text-blue-500"></i> +65 9011 7078
               </a>
-              <a href="https://linkedin.com/in/adrian-peh" target="_blank" className="flex items-center gap-2 hover:text-blue-600 transition-colors">
+              <a href="https://linkedin.com/in/adrian-peh" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-blue-600 transition-colors">
                 <i className="fab fa-linkedin text-blue-500"></i> linkedin.com/in/adrian-peh
               </a>
             </div>
