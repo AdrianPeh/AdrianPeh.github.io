@@ -11,9 +11,9 @@ interface SkillGraphProps {
 
 const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick, data }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const simulationRef = useRef<d3.Simulation<ResumeNode, ResumeLink> | null>(null);
-  const nodeSelRef = useRef<d3.Selection<SVGGElement, ResumeNode, SVGGElement, unknown> | null>(null);
-  const linkSelRef = useRef<d3.Selection<SVGLineElement, ResumeLink, SVGGElement, unknown> | null>(null);
+  const simulationRef = useRef<any>(null);
+  const nodeSelRef = useRef<any>(null);
+  const linkSelRef = useRef<any>(null);
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -29,8 +29,8 @@ const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick, data
     const nodes = data.nodes.map(d => ({ ...d }));
     const links = data.links.map(d => ({ ...d }));
 
-    const simulation = d3.forceSimulation<any, any>(nodes)
-      .force("link", d3.forceLink<any, any>(links).id((d: any) => d.id).distance(100))
+    const simulation = d3.forceSimulation(nodes)
+      .force("link", d3.forceLink(links).id((d: any) => d.id).distance(100))
       .force("charge", d3.forceManyBody().strength(-300))
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("collision", d3.forceCollide().radius(50));
@@ -46,7 +46,7 @@ const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick, data
       .enter().append("line")
       .attr("stroke", "#cbd5e1")
       .attr("stroke-opacity", 0.6)
-      .attr("stroke-width", d => Math.sqrt(d.value) * 2);
+      .attr("stroke-width", (d: any) => Math.sqrt(d.value) * 2);
 
     const node = g.append("g")
       .attr("class", "nodes")
@@ -54,15 +54,15 @@ const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick, data
       .data(nodes)
       .enter().append("g")
       .attr("class", "node")
-      .call(d3.drag<any, any>()
+      .call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
         .on("end", dragended)
       );
 
     node.append("circle")
-      .attr("r", d => d.val / 2 + 5)
-      .attr("fill", d => {
+      .attr("r", (d: any) => d.val / 2 + 5)
+      .attr("fill", (d: any) => {
         if (d.type === NodeType.SKILL) return "#3b82f6"; // blue-500
         if (d.type === NodeType.EXPERIENCE) return "#f59e0b"; // amber-500 (Updated for distinction)
         return "#10b981"; // emerald-500
@@ -71,9 +71,9 @@ const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick, data
       .attr("stroke-width", 2);
 
     node.append("text")
-      .attr("dy", d => d.val / 2 + 15)
+      .attr("dy", (d: any) => d.val / 2 + 15)
       .attr("text-anchor", "middle")
-      .text(d => d.label)
+      .text((d: any) => d.label)
       .attr("font-size", "10px")
       .attr("font-weight", "600")
       .attr("fill", "#475569");
@@ -131,20 +131,20 @@ const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick, data
         if (targetId === activeNodeId) connectedNodeIds.add(sourceId);
       });
 
-      node.style("opacity", d => connectedNodeIds.has(d.id) ? 1 : 0.2);
-      link.attr("stroke-opacity", l => {
+      node.style("opacity", (d: any) => connectedNodeIds.has(d.id) ? 1 : 0.2);
+      link.attr("stroke-opacity", (l: any) => {
         const s = (l.source as any).id || l.source;
         const t = (l.target as any).id || l.target;
         return (s === activeNodeId || t === activeNodeId) ? 1 : 0.05;
       });
-      link.attr("stroke", l => {
+      link.attr("stroke", (l: any) => {
         const s = (l.source as any).id || l.source;
         const t = (l.target as any).id || l.target;
         return (s === activeNodeId || t === activeNodeId) ? "#3b82f6" : "#cbd5e1";
       });
     }
 
-    node.on("click", (event, d) => onNodeClick(activeNodeId === d.id ? null : d.id));
+    node.on("click", (event: any, d: any) => onNodeClick(activeNodeId === d.id ? null : d.id));
   }, [activeNodeId, onNodeClick, data]);
 
   return (
