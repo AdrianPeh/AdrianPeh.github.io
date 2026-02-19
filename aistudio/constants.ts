@@ -32,7 +32,7 @@ export const EXPERIENCES: Experience[] = [
     bullets: [
       "Automated QA processes, improving Turnaround Time (TAT) by 50%.",
       "Designed and implemented process improvements aligned with Lean Six Sigma framework.",
-      "Managed the 360° Virtual Plant Tour project end-to-end using AutoCAD."
+      "Managed the 360° Virtual Plant Tour project end-to-end."
     ],
     skills: ["Quality Assurance", "Software Engineering", "Solution Architecture", "AutoCAD"]
   }

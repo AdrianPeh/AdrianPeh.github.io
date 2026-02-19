@@ -1,5 +1,5 @@
-
 {
-  "name": "Adrian Peh - Interactive Visual Resume",
-  "description": "An interactive resume application for Adrian Peh, featuring a dynamic D3-powered skill relationship graph connecting professional experience, certifications, and technical proficiencies."
+  "name": "Copy of Adrian Peh - Interactive Visual Resume",
+  "description": "An interactive resume application for Adrian Peh, featuring a dynamic D3-powered skill relationship graph connecting professional experience, certifications, and technical proficiencies.",
+  "requestFramePermissions": []
 }

@@ -1,17 +1,17 @@
 
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { GRAPH_DATA } from '../constants';
 import { NodeType, ResumeNode, ResumeLink } from '../types';
 
 interface SkillGraphProps {
   activeNodeId: string | null;
   onNodeClick: (id: string | null) => void;
+  data: { nodes: ResumeNode[]; links: ResumeLink[] };
 }
 
-const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick }) => {
+const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick, data }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
-  // Using refs to store D3 selections so they can be updated in separate effects
+  const simulationRef = useRef<d3.Simulation<ResumeNode, ResumeLink> | null>(null);
   const nodeSelRef = useRef<d3.Selection<SVGGElement, ResumeNode, SVGGElement, unknown> | null>(null);
   const linkSelRef = useRef<d3.Selection<SVGLineElement, ResumeLink, SVGGElement, unknown> | null>(null);
 
@@ -25,18 +25,24 @@ const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick }) =>
       .attr("viewBox", `0 0 ${width} ${height}`)
       .html(""); // Clear previous content
 
-    const simulation = d3.forceSimulation<ResumeNode, ResumeLink>(GRAPH_DATA.nodes)
-      .force("link", d3.forceLink<ResumeNode, ResumeLink>(GRAPH_DATA.links).id((d: any) => d.id).distance(100))
+    // Deep copy nodes and links because D3 mutates them
+    const nodes = data.nodes.map(d => ({ ...d }));
+    const links = data.links.map(d => ({ ...d }));
+
+    const simulation = d3.forceSimulation<any, any>(nodes)
+      .force("link", d3.forceLink<any, any>(links).id((d: any) => d.id).distance(100))
       .force("charge", d3.forceManyBody().strength(-300))
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("collision", d3.forceCollide().radius(50));
+
+    simulationRef.current = simulation;
 
     const g = svg.append("g");
 
     const link = g.append("g")
       .attr("class", "links")
       .selectAll("line")
-      .data(GRAPH_DATA.links)
+      .data(links)
       .enter().append("line")
       .attr("stroke", "#cbd5e1")
       .attr("stroke-opacity", 0.6)
@@ -45,7 +51,7 @@ const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick }) =>
     const node = g.append("g")
       .attr("class", "nodes")
       .selectAll("g")
-      .data(GRAPH_DATA.nodes)
+      .data(nodes)
       .enter().append("g")
       .attr("class", "node")
       .call(d3.drag<any, any>()
@@ -58,7 +64,7 @@ const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick }) =>
       .attr("r", d => d.val / 2 + 5)
       .attr("fill", d => {
         if (d.type === NodeType.SKILL) return "#3b82f6"; // blue-500
-        if (d.type === NodeType.EXPERIENCE) return "#6366f1"; // indigo-500
+        if (d.type === NodeType.EXPERIENCE) return "#f59e0b"; // amber-500 (Updated for distinction)
         return "#10b981"; // emerald-500
       })
       .attr("stroke", "#fff")
@@ -69,10 +75,9 @@ const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick }) =>
       .attr("text-anchor", "middle")
       .text(d => d.label)
       .attr("font-size", "10px")
-      .attr("font-weight", "500")
+      .attr("font-weight", "600")
       .attr("fill", "#475569");
 
-    // Store selections in refs for subsequent update effects
     nodeSelRef.current = node as any;
     linkSelRef.current = link as any;
 
@@ -106,9 +111,8 @@ const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick }) =>
     return () => {
       simulation.stop();
     };
-  }, []); // Run once on mount
+  }, [data]);
 
-  // Update styles when activeNodeId changes
   useEffect(() => {
     if (!nodeSelRef.current || !linkSelRef.current) return;
 
@@ -120,7 +124,7 @@ const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick }) =>
       link.attr("stroke-opacity", 0.6).attr("stroke", "#cbd5e1");
     } else {
       const connectedNodeIds = new Set<string>([activeNodeId]);
-      GRAPH_DATA.links.forEach(l => {
+      data.links.forEach(l => {
         const sourceId = (l.source as any).id || l.source;
         const targetId = (l.target as any).id || l.target;
         if (sourceId === activeNodeId) connectedNodeIds.add(targetId);
@@ -140,26 +144,27 @@ const SkillGraph: React.FC<SkillGraphProps> = ({ activeNodeId, onNodeClick }) =>
       });
     }
 
-    // Refresh click handler with latest activeNodeId closure
     node.on("click", (event, d) => onNodeClick(activeNodeId === d.id ? null : d.id));
-
-  }, [activeNodeId, onNodeClick]);
+  }, [activeNodeId, onNodeClick, data]);
 
   return (
     <div className="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative">
-      <div className="absolute top-4 left-4 z-10 space-y-2">
+      <div className="absolute top-4 left-4 z-10 space-y-2 pointer-events-none">
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          Graph Legend
+        </div>
         <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
           <div className="w-3 h-3 rounded-full bg-blue-500"></div> Core Skill
         </div>
         <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-          <div className="w-3 h-3 rounded-full bg-indigo-500"></div> Experience
+          <div className="w-3 h-3 rounded-full bg-amber-500"></div> Experience
         </div>
         <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
           <div className="w-3 h-3 rounded-full bg-emerald-500"></div> Certification
         </div>
       </div>
-      <div className="absolute top-4 right-4 z-10">
-        <span className="text-xs text-slate-400 italic">Click nodes to see relationships</span>
+      <div className="absolute top-4 right-4 z-10 pointer-events-none">
+        <span className="text-xs text-slate-400 italic">Drag to explore • Click to filter</span>
       </div>
       <svg ref={svgRef} className="w-full h-[500px]"></svg>
     </div>

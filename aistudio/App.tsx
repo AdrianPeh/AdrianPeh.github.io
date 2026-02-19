@@ -5,37 +5,42 @@ import {
   EXPERIENCES, 
   CERTIFICATIONS, 
   EDUCATIONS, 
-  SKILLS_LIST 
+  SKILLS_LIST,
+  GRAPH_DATA 
 } from './constants';
-import { NodeType } from './types';
 
 const App: React.FC = () => {
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
 
   const filteredExperiences = useMemo(() => {
-    if (!activeNodeId) return EXPERIENCES;
-    // If a skill is clicked, show related experiences
-    if (SKILLS_LIST.includes(activeNodeId)) {
-      return EXPERIENCES.filter(e => e.skills.includes(activeNodeId));
+    let list = EXPERIENCES;
+    if (activeNodeId) {
+      if (SKILLS_LIST.includes(activeNodeId)) {
+        list = list.filter(e => e.skills.includes(activeNodeId));
+      } else {
+        const expMatch = list.find(e => e.company === activeNodeId);
+        list = expMatch ? [expMatch] : list;
+      }
     }
-    // If an experience is clicked, just show that one
-    const expMatch = EXPERIENCES.find(e => e.company === activeNodeId);
-    return expMatch ? [expMatch] : EXPERIENCES;
+    return list;
   }, [activeNodeId]);
 
   const filteredCertifications = useMemo(() => {
-    if (!activeNodeId) return CERTIFICATIONS;
-    if (SKILLS_LIST.includes(activeNodeId)) {
-      return CERTIFICATIONS.filter(c => c.skills.includes(activeNodeId));
+    let list = CERTIFICATIONS;
+    if (activeNodeId) {
+      if (SKILLS_LIST.includes(activeNodeId)) {
+        list = list.filter(c => c.skills.includes(activeNodeId));
+      } else {
+        const certMatch = list.find(c => c.name === activeNodeId);
+        list = certMatch ? [certMatch] : list;
+      }
     }
-    const certMatch = CERTIFICATIONS.find(c => c.name === activeNodeId);
-    return certMatch ? [certMatch] : CERTIFICATIONS;
+    return list;
   }, [activeNodeId]);
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -57,8 +62,7 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
-        {/* Summary */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
         <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
             <i className="fas fa-user-circle text-blue-500"></i> Summary
@@ -71,32 +75,39 @@ const App: React.FC = () => {
           </p>
         </section>
 
-        {/* Visual Graph Section */}
-        <section className="space-y-4">
+        {/* Graph Section */}
+        <section className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-              <i className="fas fa-project-diagram text-blue-500"></i> Skill Relationship Graph
+              <i className="fas fa-project-diagram text-blue-500"></i> Career Ecosystem
             </h2>
             {activeNodeId && (
               <button 
                 onClick={() => setActiveNodeId(null)}
-                className="text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 px-3 py-1 rounded-full transition-all"
+                className="text-xs font-bold text-red-500 hover:text-red-600 bg-red-50 px-3 py-2 rounded-full transition-all flex items-center gap-1"
               >
-                Clear Selection
+                <i className="fas fa-times-circle"></i> Clear Selection
               </button>
             )}
           </div>
-          <SkillGraph activeNodeId={activeNodeId} onNodeClick={setActiveNodeId} />
+          
+          <SkillGraph 
+            activeNodeId={activeNodeId} 
+            onNodeClick={setActiveNodeId} 
+            data={GRAPH_DATA}
+          />
         </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Experience Column */}
           <div className="lg:col-span-2 space-y-8">
             <section className="space-y-6">
-              <h2 className="text-xl font-bold text-slate-900 border-b pb-2">Professional Experience</h2>
+              <h2 className="text-xl font-bold text-slate-900 border-b pb-2 flex items-center justify-between">
+                <span>Professional Experience</span>
+                <span className="text-xs font-normal text-slate-400 uppercase tracking-widest">{filteredExperiences.length} Roles</span>
+              </h2>
               <div className="space-y-6">
                 {filteredExperiences.map((exp, idx) => (
-                  <div key={idx} className={`bg-white p-6 rounded-xl border border-slate-200 shadow-sm transition-all duration-300 ${activeNodeId === exp.company ? 'ring-2 ring-blue-500' : ''}`}>
+                  <div key={idx} className={`bg-white p-6 rounded-xl border border-slate-200 shadow-sm transition-all duration-300 ${activeNodeId === exp.company ? 'ring-2 ring-blue-500 shadow-lg' : ''}`}>
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-lg font-bold text-slate-900">{exp.role}</h3>
@@ -117,7 +128,11 @@ const App: React.FC = () => {
                         <span 
                           key={skill}
                           onClick={() => setActiveNodeId(skill)}
-                          className={`text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-md cursor-pointer transition-colors ${activeNodeId === skill ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                          className={`text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-md transition-colors cursor-pointer ${
+                            activeNodeId === skill 
+                              ? 'bg-blue-600 text-white shadow-md' 
+                              : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                          }`}
                         >
                           {skill}
                         </span>
@@ -129,13 +144,12 @@ const App: React.FC = () => {
             </section>
           </div>
 
-          {/* Sidebar Column: Certs and Education */}
           <div className="space-y-8">
             <section className="space-y-4">
               <h2 className="text-xl font-bold text-slate-900 border-b pb-2">Certifications</h2>
               <div className="space-y-3">
                 {filteredCertifications.map((cert, idx) => (
-                  <div key={idx} className={`bg-white p-4 rounded-xl border border-slate-200 shadow-sm transition-all duration-300 ${activeNodeId === cert.name ? 'ring-2 ring-emerald-500' : ''}`}>
+                  <div key={idx} className={`bg-white p-4 rounded-xl border border-slate-200 shadow-sm transition-all duration-300 ${activeNodeId === cert.name ? 'ring-2 ring-emerald-500 shadow-md' : ''}`}>
                     <h4 className="font-bold text-sm text-slate-900 leading-snug">{cert.name}</h4>
                     <p className="text-xs text-slate-500 mb-2">{cert.issuer}</p>
                     <div className="flex flex-wrap gap-1">
@@ -143,7 +157,11 @@ const App: React.FC = () => {
                         <span 
                           key={s} 
                           onClick={() => setActiveNodeId(s)}
-                          className={`text-[9px] px-1.5 py-0.5 rounded cursor-pointer ${activeNodeId === s ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600'}`}
+                          className={`text-[9px] px-1.5 py-0.5 rounded transition-colors cursor-pointer ${
+                            activeNodeId === s 
+                              ? 'bg-blue-600 text-white' 
+                              : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                          }`}
                         >
                           {s}
                         </span>
@@ -170,11 +188,10 @@ const App: React.FC = () => {
         </div>
       </main>
       
-      {/* Floating Action Hint */}
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2">
-        <div className="bg-slate-900 text-white text-xs px-4 py-2 rounded-full shadow-lg flex items-center gap-3 animate-bounce">
-          <i className="fas fa-mouse-pointer"></i>
-          Explore Adrian's career by interacting with the graph
+      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="bg-slate-900/90 backdrop-blur-sm text-white text-xs px-5 py-2.5 rounded-full shadow-2xl flex items-center gap-3 border border-slate-700">
+          <i className="fas fa-info-circle text-blue-400"></i>
+          Explore Adrian's expertise by interacting with the graph
         </div>
       </div>
     </div>
